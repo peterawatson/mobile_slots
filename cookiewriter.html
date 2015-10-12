@@ -1,0 +1,77 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+
+<script language='JavaScript'>
+
+
+	//var d = new Date();
+	//c = new Date(d.getTime() + 1000*60);
+	//alert(d + " " + c);
+
+
+
+// get the current URL
+var url = window.location.toString();
+//get the parameters
+url.match(/\?(.+)$/);
+var paramsString = RegExp.$1;
+// split up the query string and store in an
+// associative array
+var params = paramsString.split("&");
+var queryStringList = [];
+ 
+for(var i=0;i<params.length;i++) {
+	var tmp = params[i].split('=');
+	queryStringList[tmp[0]] = unescape(tmp[1]);
+};
+ 
+var casinoname = null;
+if (String(queryStringList['casinoname']) != 'undefined') {
+	casinoname = queryStringList['casinoname'];
+}
+
+var realMode = 1;
+if (String(queryStringList['realMode']) != 'undefined') {
+	realMode = queryStringList['realMode'];
+}
+
+var expire = 0;
+if (String(queryStringList['expire']) != 'undefined') {
+	if (Number(queryStringList['expire']) == -1) {	
+		expire = Number(queryStringList['expire']);
+	}
+}
+
+iapiSetCookie("loginresult_" + casinoname + "_" + realMode, paramsString, expire);
+
+function iapiSetCookie(c_name, value, expiredays){
+	//alert('setCookie: '+c_name+', '+value);" +
+	var exdate = new Date();
+	var ex = '';
+	if (expiredays > 0 || expiredays < 0) {
+		exdate.setDate(exdate.getDate()+expiredays);
+		ex = ';expires='+exdate.toGMTString();
+	};
+	
+	//parse superdomain, if co.uk or similar, then 3 last parts of domain (if not ip)
+	var cookiedomain = document.domain;
+	var tmp = cookiedomain.split('.');	
+	if (tmp.length > 1 && isNaN(tmp[tmp.length-1])) {
+		cookiedomain = tmp[tmp.length-2] + '.' + tmp[tmp.length-1];
+		if (tmp.length > 3 && tmp[tmp.length-2].length < 3) {
+			cookiedomain = tmp[tmp.length-3] + '.' + cookiedomain;
+		}
+	}	
+
+	document.cookie = c_name+'='+escape(value)+ex+';path=/;domain='+ cookiedomain +';';
+}
+
+</script>
+
+</head>
+<body>
+
+</body>
+</html>
